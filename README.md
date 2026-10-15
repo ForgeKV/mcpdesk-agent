@@ -8,7 +8,7 @@ This repository holds release binaries only (no source code).
 
 ## Download (latest)
 
-Latest: **v0.2.6**. All three binaries below contain the same release.
+Latest: **v0.2.7**. All three binaries below contain the same release.
 
 | Platform | File |
 |---|---|
@@ -20,13 +20,15 @@ Latest: **v0.2.6**. All three binaries below contain the same release.
 
 macOS builds are not available yet. All releases: https://github.com/osk999/mcpdesk-agent/releases
 
-## In v0.2.6
+## In v0.2.7
 
 - Clear terminal UI with the running version, desk ID and OTP cards, and distinct READ / PLAYBOOKS / FULL colors.
 - Use F1/F2/F3 or Tab, Shift+Tab, Enter and Escape to change modes. Higher access requires local confirmation.
-- Disconnect active MCP clients from the agent. New connections remain blocked until the main window selects Resume; old sessions remain closed.
+- Disconnect all & pause ends all MCP sessions, cancels pending calls and stops managed tasks. The pause survives restart and mirror takeover until the main window selects Resume access.
 - Background task tools start long commands promptly and support status, live output, cancellation and timeouts.
 - Read up to 50 files in one call, with paging, encodings, per-file errors and a combined response-size cap.
+
+For a stopped headless/service identity, recover access with `mcpdeskagent access resume --data-dir <exact-identity-directory>`. Stop the service and close all mirrors first. Resume permits still-valid credentials to create fresh sessions under the selected mode.
 
 ## Verify
 
