@@ -8,15 +8,25 @@ This repository holds release binaries only (no source code).
 
 ## Download (latest)
 
-| Platform | File | VirusTotal |
-|---|---|---|
-| Windows x86_64 | [mcpdeskagent.exe](https://github.com/osk999/mcpdesk-agent/releases/latest/download/mcpdeskagent.exe) | [scan](https://www.virustotal.com/gui/file/6fed7715184576a5042b172ea384f40681f804ae3015cce9bec2773e987eab71) |
-| Linux x86_64 (static) | [mcpdeskagent-linux-x86_64](https://github.com/osk999/mcpdesk-agent/releases/latest/download/mcpdeskagent-linux-x86_64) | [scan](https://www.virustotal.com/gui/file/7456dd301aacba664ca8309004105407f4b717f0da77bc01098b899485208f8a) |
-| Linux aarch64 (static) | [mcpdeskagent-linux-aarch64](https://github.com/osk999/mcpdesk-agent/releases/latest/download/mcpdeskagent-linux-aarch64) | [scan](https://www.virustotal.com/gui/file/a244af19dac40b0ed6ec77cf38f1b95495c7166a18a06cc54c730f1c4458a8cc) |
-| Linux launcher + icon | [mcpdeskagent.desktop](https://github.com/osk999/mcpdesk-agent/releases/latest/download/mcpdeskagent.desktop), [mcpdeskagent.png](https://github.com/osk999/mcpdesk-agent/releases/latest/download/mcpdeskagent.png) | |
-| Checksums | [SHA256SUMS](https://github.com/osk999/mcpdesk-agent/releases/latest/download/SHA256SUMS) | |
+Latest: **v0.2.6**. All three binaries below contain the same release.
+
+| Platform | File |
+|---|---|
+| Windows x86_64 | [mcpdeskagent.exe](https://github.com/osk999/mcpdesk-agent/releases/latest/download/mcpdeskagent.exe) |
+| Linux x86_64 (static) | [mcpdeskagent-linux-x86_64](https://github.com/osk999/mcpdesk-agent/releases/latest/download/mcpdeskagent-linux-x86_64) |
+| Linux aarch64 (static) | [mcpdeskagent-linux-aarch64](https://github.com/osk999/mcpdesk-agent/releases/latest/download/mcpdeskagent-linux-aarch64) |
+| Linux launcher + icon | [mcpdeskagent.desktop](https://github.com/osk999/mcpdesk-agent/releases/latest/download/mcpdeskagent.desktop), [mcpdeskagent.png](https://github.com/osk999/mcpdesk-agent/releases/latest/download/mcpdeskagent.png) |
+| Checksums | [SHA256SUMS](https://github.com/osk999/mcpdesk-agent/releases/latest/download/SHA256SUMS) |
 
 macOS builds are not available yet. All releases: https://github.com/osk999/mcpdesk-agent/releases
+
+## In v0.2.6
+
+- Clear terminal UI with the running version, desk ID and OTP cards, and distinct READ / PLAYBOOKS / FULL colors.
+- Use F1/F2/F3 or Tab, Shift+Tab, Enter and Escape to change modes. Higher access requires local confirmation.
+- Disconnect active MCP clients from the agent. New connections remain blocked until the main window selects Resume; old sessions remain closed.
+- Background task tools start long commands promptly and support status, live output, cancellation and timeouts.
+- Read up to 50 files in one call, with paging, encodings, per-file errors and a combined response-size cap.
 
 ## Verify
 
