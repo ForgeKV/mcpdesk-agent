@@ -8,7 +8,7 @@ This repository holds release binaries only (no source code).
 
 ## Download (latest)
 
-Latest: **v0.2.7**. All three binaries below contain the same release.
+Latest: **v0.2.8**. All three binaries below contain the same release.
 
 | Platform | File |
 |---|---|
@@ -20,8 +20,10 @@ Latest: **v0.2.7**. All three binaries below contain the same release.
 
 macOS builds are not available yet. All releases: https://github.com/osk999/mcpdesk-agent/releases
 
-## In v0.2.7
+## In v0.2.8
 
+- Modern MCP discovery and per-request metadata work alongside the 2025 lifecycle. The stdio bridge mirrors required headers and preserves protocol errors.
+- Disconnect all & pause remains visible for stateless modern clients, even when the legacy session count is zero. Client tools may need a refresh or reconnect after device selection.
 - Clear terminal UI with the running version, desk ID and OTP cards, and distinct READ / PLAYBOOKS / FULL colors.
 - Use F1/F2/F3 or Tab, Shift+Tab, Enter and Escape to change modes. Higher access requires local confirmation.
 - Disconnect all & pause ends all MCP sessions, cancels pending calls and stops managed tasks. The pause survives restart and mirror takeover until the main window selects Resume access.
