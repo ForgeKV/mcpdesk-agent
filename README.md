@@ -8,7 +8,7 @@ This repository holds release binaries only (no source code).
 
 ## Download (latest)
 
-Latest: **v0.2.8**. All three binaries below contain the same release.
+Latest: **v0.2.10**. All three binaries below contain the same release.
 
 | Platform | File |
 |---|---|
@@ -20,15 +20,13 @@ Latest: **v0.2.8**. All three binaries below contain the same release.
 
 macOS builds are not available yet. All releases: https://github.com/osk999/mcpdesk-agent/releases
 
-## In v0.2.8
+## In v0.2.10
 
-- Modern MCP discovery and per-request metadata work alongside the 2025 lifecycle. The stdio bridge mirrors required headers and preserves protocol errors.
-- Disconnect all & pause remains visible for stateless modern clients, even when the legacy session count is zero. Client tools may need a refresh or reconnect after device selection.
-- Clear terminal UI with the running version, desk ID and OTP cards, and distinct READ / PLAYBOOKS / FULL colors.
-- Use F1/F2/F3 or Tab, Shift+Tab, Enter and Escape to change modes. Higher access requires local confirmation.
-- Disconnect all & pause ends all MCP sessions, cancels pending calls and stops managed tasks. The pause survives restart and mirror takeover until the main window selects Resume access.
-- Background task tools start long commands promptly and support status, live output, cancellation and timeouts.
-- Read up to 50 files in one call, with paging, encodings, per-file errors and a combined response-size cap.
+- The agent prints one ready line for your AI wherever it shows the desk code: `Tell your AI: connect device 123456789 code 000000` (example values). `status` and `status --json` include it too.
+- A second launch with no terminal now prints the running agent's details and exits 5 (or 0 with `--exit-if-running`) instead of hanging as a mirror. This also applies when the running agent belongs to another OS user or a service. In a terminal you still get the read-only mirror.
+- `MCPDESK_LOCAL_ONLY`, `MCPDESK_EXIT_IF_RUNNING` and `MCPDESK_INSTALLED` accept `1/0/true/false/yes/no/on/off`.
+- Names and labels in `status --json` and the mirror are cleaned of invisible characters.
+- Known caveats: the Windows second-launch check is only cross-compiled so far; macOS is not built; Windows binaries are unsigned.
 
 For a stopped headless/service identity, recover access with `mcpdeskagent access resume --data-dir <exact-identity-directory>`. Stop the service and close all mirrors first. Resume permits still-valid credentials to create fresh sessions under the selected mode.
 
