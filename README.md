@@ -8,7 +8,7 @@ This repository holds release binaries only (no source code).
 
 ## Download (latest)
 
-Latest: **v0.2.12**. All binaries below contain the same release.
+Latest: **v0.2.13**. All binaries below contain the same release.
 
 | Platform | File |
 |---|---|
@@ -20,6 +20,11 @@ Latest: **v0.2.12**. All binaries below contain the same release.
 | Checksums | [SHA256SUMS](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/SHA256SUMS) |
 
 macOS builds are not available yet. All releases: https://github.com/ForgeKV/mcpdesk-agent/releases
+
+## In v0.2.13
+
+- **The ready line names the server.** The desk now prints `Tell your AI: mcpdesk connect device 123456789 code 000000` (placeholder values). An AI client with several MCP servers did not always know which server `connect device …` referred to; the leading `mcpdesk` fixes that. The plain form is still accepted.
+- **The file tools explain themselves.** `download_file` / `upload_file` now say what they are — base64 through the conversation, for small files — and point the AI at `pull_file` / `push_file` (through `mcpdeskagent bridge --desk`) for a real copy, asking you for the bridge when those tools are not in its list. Through the bridge the two base64 tools lead with "Prefer pull_file / push_file in this session", and a `download_file` of a file over 1 MB carries a one-line note on its first chunk. AIs were picking `download_file` and ending up with base64 they could not use.
 
 ## In v0.2.12
 
