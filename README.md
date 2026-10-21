@@ -8,7 +8,7 @@ This repository holds release binaries only (no source code).
 
 ## Download (latest)
 
-Latest: **v0.2.11**. All binaries below contain the same release.
+Latest: **v0.2.12**. All binaries below contain the same release.
 
 | Platform | File |
 |---|---|
@@ -21,6 +21,11 @@ Latest: **v0.2.11**. All binaries below contain the same release.
 
 macOS builds are not available yet. All releases: https://github.com/ForgeKV/mcpdesk-agent/releases
 
+## In v0.2.12
+
+- **Files without tokens.** In end-to-end mode the bridge adds `push_file` (this machine → desk), `pull_file` (desk → this machine) and `transfer_status`. The file streams inside the encrypted session as raw chunks: no base64, and nothing passes through the AI conversation, so a multi-GB copy costs the model one receipt line (size, sha256, time). Measured through the production relay: 100 MB in 6 s (16 MB/s), a 749 MB ISO in 41 s up / 46 s down, hashes identical on both ends. Receiving on the desk needs full access; `--allowed-root` and the tool allow/deny lists apply; every transfer is in the desk's audit log. Half-received files are removed if a transfer or its session ends early. Details: https://mcpdesk.io/security/end-to-end#files
+- **Default access mode is now `full`** (was `readonly`). Pass `--mode readonly` (or `SERVERMCP_MODE=readonly`) to keep the old default. Access still needs the desk code, the current one-time code and (for invites) Approve on the desk.
+- Fix: a desk no longer drops an end-to-end handshake in progress while flushing results for another session.
 ## In v0.2.11
 
 - **End-to-end encrypted sessions** with local AI clients (Claude Code, Claude Desktop, Cursor, Codex). The conversation is encrypted between your machine and the desk; MCP Desk's servers only relay ciphertext and cannot read it. Encryption and compression run on the two endpoints. Claude.ai and ChatGPT connectors cannot use it (the cloud service is the client). Setup and limits: https://mcpdesk.io/security/end-to-end
