@@ -52,7 +52,7 @@ jobs:
           shasum -a 256 -c mcpdeskagent-macos-universal.sha256
           chmod +x "mcpdeskagent-macos-$THIN"
           file mcpdeskagent-macos-*
-          lipo -verify_arch arm64 x86_64 mcpdeskagent-macos-universal
+          lipo mcpdeskagent-macos-universal -verify_arch arm64 x86_64
           sw_vers
           uname -m
       - name: Exercise universal and native thin binaries

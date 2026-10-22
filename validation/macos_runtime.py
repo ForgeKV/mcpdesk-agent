@@ -9,12 +9,14 @@ import json
 import os
 from pathlib import Path
 import platform
+import pty
 import secrets
 import selectors
 import socket
 import subprocess
 import sys
 import tempfile
+import termios
 import time
 import urllib.error
 import urllib.request
@@ -186,4 +188,59 @@ with tempfile.TemporaryDirectory(prefix='mcpdesk-macos-runtime-') as folder:
         selector.close()
         if proc.poll() is None:
             proc.kill(); proc.wait()
+    # Exercise real terminal input/termios and local permission changes, not just pipes.
+    import fcntl
+    import signal
+    import struct
+    terminal_runtime = root/'terminal-run'
+    tty_env = dict(env, TERM='xterm-256color', MCPDESK_RUNTIME_DIR=str(terminal_runtime))
+    tty_args = args + ['--mode', 'full']
+    tty_args[tty_args.index('--data-dir') + 1] = str(root/'terminal-identity')
+    pid, fd = pty.fork()
+    if pid == 0:
+        os.execve(binary, tty_args, tty_env)
+    os.set_blocking(fd, False)
+    fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack('HHHH', 34, 120, 0, 0))
+    output = bytearray()
+    exited = False
+    def drain():
+        while True:
+            try:
+                chunk = os.read(fd, 65536)
+                if not chunk:
+                    break
+                output.extend(chunk)
+            except (BlockingIOError, OSError):
+                break
+    def mode_is(mode):
+        drain()
+        try:
+            return json.loads((terminal_runtime/'master.json').read_text())['mode'] == mode
+        except (OSError, ValueError):
+            return False
+    try:
+        wait_for(lambda: mode_is('full'))
+        check(b'\x1b[' in output and b'FULL' in output, 'terminal: interactive UI renders')
+        os.write(fd, b'\x1bOP')
+        wait_for(lambda: mode_is('readonly'))
+        check(True, 'terminal: F1 lowers access to readonly')
+        output.clear()
+        os.write(fd, b'\x1bOR')
+        wait_for(lambda: (drain(), b'Confirm' in output)[1])
+        check(mode_is('readonly'), 'terminal: F3 requires confirmation before raising access')
+        os.write(fd, b'\r')
+        wait_for(lambda: mode_is('full'))
+        check(True, 'terminal: confirmation restores full access')
+        os.write(fd, b'\x03')
+        def terminal_exited():
+            drain()
+            return os.waitpid(pid, os.WNOHANG)
+        status = wait_for(lambda: (r if r[0] else None) if (r := terminal_exited()) else None)
+        exited = True
+        check(os.waitstatus_to_exitcode(status[1]) == 0, 'terminal: Ctrl+C exits cleanly')
+    finally:
+        if not exited:
+            os.kill(pid, signal.SIGKILL)
+            os.waitpid(pid, 0)
+        os.close(fd)
     print(json.dumps({'passed': checks, 'failed': 0, 'version': version, 'architecture': platform.machine(), 'binary': Path(binary).name}), flush=True)
