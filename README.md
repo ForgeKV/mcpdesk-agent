@@ -4,11 +4,11 @@ MCP Desk Agent lets your AI reach this computer through MCP Desk — AnyDesk-sty
 
 Website: https://mcpdesk.io
 
-This repository holds release binaries only (no source code).
+This repository holds release binaries and black-box validation tooling. Agent implementation source is not published here.
 
 ## Download (latest)
 
-Latest: **v0.2.13**. All binaries below contain the same release.
+Latest: **v0.2.16**. All binaries below contain the same release.
 
 | Platform | File |
 |---|---|
@@ -19,7 +19,7 @@ Latest: **v0.2.13**. All binaries below contain the same release.
 | Linux launcher + icon | [mcpdeskagent.desktop](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent.desktop), [mcpdeskagent.png](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent.png) |
 | Checksums | [SHA256SUMS](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/SHA256SUMS) |
 
-macOS builds are not available yet. All releases: https://github.com/ForgeKV/mcpdesk-agent/releases
+macOS 11+ is available for Intel and Apple Silicon: [universal archive](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-macos-universal.tar.gz). v0.2.16 passed [140 native runtime checks](https://github.com/ForgeKV/mcpdesk-agent/actions/runs/39861126962) on macOS 14 Apple Silicon and macOS 15 Intel. See [validation coverage](validation/README.md) and [Mac first-run instructions](https://mcpdesk.io/docs#macos). All releases: https://github.com/ForgeKV/mcpdesk-agent/releases
 
 ## In v0.2.13
 
