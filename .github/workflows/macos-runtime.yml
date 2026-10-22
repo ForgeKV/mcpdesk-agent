@@ -1,0 +1,73 @@
+name: macOS published binary runtime
+on:
+  push:
+    branches: [codex/macos-runtime-validation]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Published release tag
+        default: v0.2.16
+        required: true
+permissions:
+  contents: read
+jobs:
+  runtime:
+    name: native runtime (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-14
+            thin: aarch64
+          - runner: macos-15-intel
+            thin: x86_64
+    env:
+      RELEASE_TAG: ${{ inputs.tag || 'v0.2.16' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download and verify public release (no private source or credentials)
+        shell: bash
+        env:
+          THIN: ${{ matrix.thin }}
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          mkdir artifacts
+          cd artifacts
+          base="https://github.com/ForgeKV/mcpdesk-agent/releases/download/$RELEASE_TAG"
+          for name in SHA256SUMS mcpdeskagent-macos-universal.tar.gz "mcpdeskagent-macos-$THIN"; do
+            curl -fL --retry 3 "$base/$name" -o "$name"
+          done
+          grep -E "  (mcpdeskagent-macos-universal.tar.gz|mcpdeskagent-macos-$THIN)$" SHA256SUMS > selected.sha256
+          test "$(wc -l < selected.sha256 | tr -d ' ')" = 2
+          shasum -a 256 -c selected.sha256
+          tar -xzf mcpdeskagent-macos-universal.tar.gz
+          shasum -a 256 -c mcpdeskagent-macos-universal.sha256
+          chmod +x "mcpdeskagent-macos-$THIN"
+          file mcpdeskagent-macos-*
+          lipo -verify_arch arm64 x86_64 mcpdeskagent-macos-universal
+          sw_vers
+          uname -m
+      - name: Exercise universal and native thin binaries
+        shell: bash
+        env:
+          THIN: ${{ matrix.thin }}
+        run: |
+          set -euo pipefail
+          python validation/macos_runtime.py artifacts/mcpdeskagent-macos-universal "${RELEASE_TAG#v}" 2>&1 | tee universal-results.log
+          python validation/macos_runtime.py "artifacts/mcpdeskagent-macos-$THIN" "${RELEASE_TAG#v}" 2>&1 | tee thin-results.log
+      - name: Preserve test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-runtime-${{ matrix.thin }}
+          path: |
+            *-results.log
+          retention-days: 7
