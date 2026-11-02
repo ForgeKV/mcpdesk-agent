@@ -8,18 +8,30 @@ This repository holds release binaries and black-box validation tooling. Agent i
 
 ## Download (latest)
 
-Latest: **v0.2.16**. All binaries below contain the same release.
+Latest: **v0.2.25**. All binaries below contain the same release.
 
 | Platform | File |
 |---|---|
 | Windows x86_64 | [mcpdeskagent.exe](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent.exe) |
 | Windows ARM64 | [mcpdeskagent-windows-aarch64.exe](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-windows-aarch64.exe) |
+| macOS universal (Apple Silicon + Intel, macOS 11+) | [mcpdeskagent-macos-universal](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-macos-universal), [.tar.gz](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-macos-universal.tar.gz) |
+| macOS Apple Silicon (M1+) | [mcpdeskagent-macos-aarch64](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-macos-aarch64) |
+| macOS Intel | [mcpdeskagent-macos-x86_64](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-macos-x86_64) |
+| macOS service installer | [install-macos.sh](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/install-macos.sh) |
 | Linux x86_64 (static) | [mcpdeskagent-linux-x86_64](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-linux-x86_64) |
 | Linux aarch64 (static) | [mcpdeskagent-linux-aarch64](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-linux-aarch64) |
 | Linux launcher + icon | [mcpdeskagent.desktop](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent.desktop), [mcpdeskagent.png](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent.png) |
 | Checksums | [SHA256SUMS](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/SHA256SUMS) |
 
-macOS 11+ is available for Intel and Apple Silicon: [universal archive](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-macos-universal.tar.gz). v0.2.16 passed [140 native runtime checks](https://github.com/ForgeKV/mcpdesk-agent/actions/runs/39861126962) on macOS 14 Apple Silicon and macOS 15 Intel. See [validation coverage](validation/README.md) and [Mac first-run instructions](https://mcpdesk.io/docs#macos). All releases: https://github.com/ForgeKV/mcpdesk-agent/releases
+Mac quick start: `curl -LO https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-macos-universal && chmod +x mcpdeskagent-macos-universal && ./mcpdeskagent-macos-universal`. v0.2.16 passed [140 native runtime checks](https://github.com/ForgeKV/mcpdesk-agent/actions/runs/39861126962) on macOS 14 Apple Silicon and macOS 15 Intel. See [validation coverage](validation/README.md) and [Mac first-run instructions](https://mcpdesk.io/docs#macos). All releases: https://github.com/ForgeKV/mcpdesk-agent/releases
+
+## In v0.2.25
+
+- **Sharp, smooth live view.** The picture stays at native size (up to 1920 px wide; the frame rate drops before the size does), with area-averaged scaling so small text stays readable. About 0.5 Mbit/s at 1920×1200 on a normal screen.
+- **Smooth mouse.** The viewer's browser draws the pointer itself and input is sent ahead of frames.
+- **Colored /live toolbar** and a clear message when a one-time live link is reused in a second tab (the first tab stays live).
+- **Faster WebRTC start** for browsers that send congestion feedback, with quick backoff on heavy packet loss.
+- Remote screen still starts on VIEW, even when access is FULL; CONTROL needs a click and a confirm on the desk.
 
 ## In v0.2.13
 
@@ -40,7 +52,7 @@ macOS 11+ is available for Intel and Apple Silicon: [universal archive](https://
   - Manage clients on the desk: `mcpdeskagent clients [--revoke <label>]`; on the client: `bridge --forget-desk`.
 - The desk's rotating one-time code now changes every 10 minutes (was 5).
 - New binary: Windows ARM64.
-- Known caveats: binaries are not code-signed (verify with `SHA256SUMS`); macOS is not built; the ARM64 builds were not run on real ARM hardware.
+- Known caveats: binaries are not code-signed (verify with `SHA256SUMS`); the ARM64 builds were not run on real ARM hardware.
 For a stopped headless/service identity, recover access with `mcpdeskagent access resume --data-dir <exact-identity-directory>`. Stop the service and close all mirrors first. Resume permits still-valid credentials to create fresh sessions under the selected mode.
 
 ## Verify
