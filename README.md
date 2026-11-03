@@ -8,7 +8,7 @@ This repository holds release binaries and black-box validation tooling. Agent i
 
 ## Download (latest)
 
-Latest: **v0.2.28**. All binaries below contain the same release.
+Latest: **v0.2.29**. All binaries below contain the same release.
 
 | Platform | File |
 |---|---|
@@ -24,6 +24,13 @@ Latest: **v0.2.28**. All binaries below contain the same release.
 | Checksums | [SHA256SUMS](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/SHA256SUMS) |
 
 Mac quick start: `curl -LO https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-macos-universal && chmod +x mcpdeskagent-macos-universal && ./mcpdeskagent-macos-universal`. v0.2.16 passed [140 native runtime checks](https://github.com/ForgeKV/mcpdesk-agent/actions/runs/39861126962) on macOS 14 Apple Silicon and macOS 15 Intel. See [validation coverage](validation/README.md) and [Mac first-run instructions](https://mcpdesk.io/docs#macos). All releases: https://github.com/ForgeKV/mcpdesk-agent/releases
+
+## In v0.2.29
+
+- **Link a desk from inside your AI.** Ask your AI to "link desk <9 digits> code <6 digits>"; the desk asks Allow? (a dialog, a console line, or `mcpdeskagent link approve --wait 120` on a headless server). **This is a permanent link!** The desk becomes private to that account: its desk code and one-time code no longer let anyone else connect. Linking to another account needs Allow again and removes the previous owner. `mcpdeskagent link status|approve|deny|revoke`. Needs the updated MCP Desk service; until then desks stay public as before.
+- **First screen checklist**: online, linked owner or what to tell your AI, and on macOS Screen Recording / Accessibility with Fix buttons (`mcpdeskagent screen permissions --open screen|accessibility`).
+- **macOS per-user agent**: `./mcpdeskagent-macos-universal install-service --user` (no sudo) starts at login in your session and can capture the screen once allowed; `uninstall-service --user` removes it. Still not Developer ID signed or notarized.
+- Unchanged: OAuth, the 10-minute one-time code, public desks, the tools.
 
 ## In v0.2.28
 
