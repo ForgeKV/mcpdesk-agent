@@ -8,7 +8,7 @@ This repository holds release binaries and black-box validation tooling. Agent i
 
 ## Download (latest)
 
-Latest: **v0.2.27**. All binaries below contain the same release.
+Latest: **v0.2.28**. All binaries below contain the same release.
 
 | Platform | File |
 |---|---|
@@ -24,6 +24,13 @@ Latest: **v0.2.27**. All binaries below contain the same release.
 | Checksums | [SHA256SUMS](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/SHA256SUMS) |
 
 Mac quick start: `curl -LO https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-macos-universal && chmod +x mcpdeskagent-macos-universal && ./mcpdeskagent-macos-universal`. v0.2.16 passed [140 native runtime checks](https://github.com/ForgeKV/mcpdesk-agent/actions/runs/39861126962) on macOS 14 Apple Silicon and macOS 15 Intel. See [validation coverage](validation/README.md) and [Mac first-run instructions](https://mcpdesk.io/docs#macos). All releases: https://github.com/ForgeKV/mcpdesk-agent/releases
+
+## In v0.2.28
+
+- **Live Browser tab no longer stays white.** An address typed while the desk was still asking for approval or starting the browser used to be dropped, leaving a blank page at 0 fps. The desk now opens it as soon as the stream starts.
+- **Key-only desks** no longer log a `public_key_conflict` re-register warning on every start. **Linux installer**: `--from DIR` wins over an old identity in root's home, and stops with an error if DIR has no identity.
+- **macOS**: `--data-dir /tmp/...` works (data dirs behind a symlink such as /tmp -> /private/tmp are resolved first). A device.key in the wrong format (OpenSSL PEM, OpenSSH, PKCS#8 v1) gets an error that says so. A desk with no usable display reports that before asking for screen approval.
+- Unchanged: OAuth, the 10-minute one-time code, the wire protocol and the tools.
 
 ## In v0.2.27
 
