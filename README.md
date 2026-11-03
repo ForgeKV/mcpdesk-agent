@@ -8,7 +8,7 @@ This repository holds release binaries and black-box validation tooling. Agent i
 
 ## Download (latest)
 
-Latest: **v0.2.26**. All binaries below contain the same release.
+Latest: **v0.2.27**. All binaries below contain the same release.
 
 | Platform | File |
 |---|---|
@@ -24,6 +24,11 @@ Latest: **v0.2.26**. All binaries below contain the same release.
 | Checksums | [SHA256SUMS](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/SHA256SUMS) |
 
 Mac quick start: `curl -LO https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-macos-universal && chmod +x mcpdeskagent-macos-universal && ./mcpdeskagent-macos-universal`. v0.2.16 passed [140 native runtime checks](https://github.com/ForgeKV/mcpdesk-agent/actions/runs/39861126962) on macOS 14 Apple Silicon and macOS 15 Intel. See [validation coverage](validation/README.md) and [Mac first-run instructions](https://mcpdesk.io/docs#macos). All releases: https://github.com/ForgeKV/mcpdesk-agent/releases
+
+## In v0.2.27
+
+- **Live links are sign-in only.** The desk's guide tells the AI to hand over the `open_live_view` link only, with no confirm code. The link opens in a browser signed in to mcpdesk.io as the connection's own account. Without a link, https://mcpdesk.io/live still works with the desk code and one-time code.
+- Unchanged: OAuth, the 10-minute one-time code, the wire protocol, the tools and the live view itself (including monitor switching).
 
 ## In v0.2.26
 
