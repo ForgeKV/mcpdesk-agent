@@ -2,13 +2,13 @@
 
 MCP Desk Agent lets your AI reach this computer through MCP Desk — AnyDesk-style remote MCP for AI. Run the agent, get a desk code, approve connections, and choose which tools your desk exposes.
 
-Website: https://mcpdesk.io
+Website: https://mcpdesk.ai
 
 This repository holds release binaries and black-box validation tooling. Agent implementation source is not published here.
 
 ## Download (latest)
 
-Latest: **v0.2.29**. All binaries below contain the same release.
+Latest: **v0.2.30**. All binaries below contain the same release.
 
 | Platform | File |
 |---|---|
@@ -23,7 +23,12 @@ Latest: **v0.2.29**. All binaries below contain the same release.
 | Linux launcher + icon | [mcpdeskagent.desktop](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent.desktop), [mcpdeskagent.png](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent.png) |
 | Checksums | [SHA256SUMS](https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/SHA256SUMS) |
 
-Mac quick start: `curl -LO https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-macos-universal && chmod +x mcpdeskagent-macos-universal && ./mcpdeskagent-macos-universal`. v0.2.16 passed [140 native runtime checks](https://github.com/ForgeKV/mcpdesk-agent/actions/runs/39861126962) on macOS 14 Apple Silicon and macOS 15 Intel. See [validation coverage](validation/README.md) and [Mac first-run instructions](https://mcpdesk.io/docs#macos). All releases: https://github.com/ForgeKV/mcpdesk-agent/releases
+Mac quick start: `curl -LO https://github.com/ForgeKV/mcpdesk-agent/releases/latest/download/mcpdeskagent-macos-universal && chmod +x mcpdeskagent-macos-universal && ./mcpdeskagent-macos-universal`. v0.2.16 passed [140 native runtime checks](https://github.com/ForgeKV/mcpdesk-agent/actions/runs/39861126962) on macOS 14 Apple Silicon and macOS 15 Intel. See [validation coverage](validation/README.md) and [Mac first-run instructions](https://mcpdesk.ai/docs#macos). All releases: https://github.com/ForgeKV/mcpdesk-agent/releases
+
+## In v0.2.30
+
+- **Default endpoints are now mcpdesk.ai**, with automatic fallback to mcpdesk.io. The agent’s default hub is `https://hub.mcpdesk.ai` (MCP/gateway `https://mcp.mcpdesk.ai`). If that hub is unreachable — TLS failure or HTTP 5xx, including Cloudflare 526 — it tries the matching `.io` host once. Desks already registered on `.io` stay on `.io`.
+- Windows builds in this release are unsigned (Trusted Signing is being wired separately). macOS 11+; still not Developer ID signed or notarized.
 
 ## In v0.2.29
 
