@@ -1,0 +1,128 @@
+# Sign published Windows EXEs with Azure Trusted Signing (now Azure Artifact Signing).
+#
+# The certificate profile (mcpdesk-public) does not exist until Microsoft finishes
+# identity validation for Custom Advertising 23 LTD. A missing or unusable profile
+# must not fail this workflow or replace the unsigned release assets. Re-run with
+# workflow_dispatch after the profile is created.
+name: Sign Windows release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to sign (for example v0.2.30)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  sign-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    env:
+      RELEASE_REPO: ForgeKV/mcpdesk-agent
+    steps:
+      - name: Resolve release tag
+        id: tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            tag="${{ inputs.tag }}"
+          else
+            tag="${{ github.event.release.tag_name }}"
+          fi
+          [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Download Windows EXEs and checksums
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          set -euo pipefail
+          mkdir -p unsigned work
+          gh release download "$TAG" -R "$RELEASE_REPO" -D unsigned \
+            -p 'mcpdeskagent.exe' \
+            -p 'mcpdeskagent-windows-aarch64.exe' \
+            -p SHA256SUMS
+          cd unsigned
+          grep -E '  (mcpdeskagent\.exe|mcpdeskagent-windows-aarch64\.exe)$' SHA256SUMS > windows.sha256
+          test "$(wc -l < windows.sha256 | tr -d ' ')" = 2
+          sha256sum -c windows.sha256
+          cp -a mcpdeskagent.exe mcpdeskagent-windows-aarch64.exe ../work/
+          cp SHA256SUMS ../work/SHA256SUMS.orig
+
+      - name: Sign with Azure Artifact Signing (Trusted Signing)
+        id: sign
+        continue-on-error: true
+        uses: azure/artifact-signing-action@v2
+        with:
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          endpoint: https://weu.codesigning.azure.net/
+          signing-account-name: mcpdesk-signing
+          certificate-profile-name: mcpdesk-public
+          files-folder: ${{ github.workspace }}\work
+          files-folder-filter: exe
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
+          description: MCP Desk Agent
+          description-url: https://mcpdesk.ai
+
+      - name: Publish signed EXEs or keep the unsigned release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          SIGN_OUTCOME: ${{ steps.sign.outcome }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $windows = @('mcpdeskagent.exe', 'mcpdeskagent-windows-aarch64.exe')
+          $work = Join-Path $env:GITHUB_WORKSPACE 'work'
+          if ($env:SIGN_OUTCOME -ne 'success') {
+            Write-Host @"
+          Trusted Signing did not succeed (step outcome: $($env:SIGN_OUTCOME)).
+          This is expected until Microsoft approves identity validation for Custom Advertising 23 LTD
+          and the Azure certificate profile 'mcpdesk-public' exists on account 'mcpdesk-signing'.
+          Leaving the published $env:TAG Windows assets unsigned. Re-run this workflow
+          (workflow_dispatch with tag $env:TAG) after the profile is created.
+          "@
+            exit 0
+          }
+          foreach ($name in $windows) {
+            $path = Join-Path $work $name
+            $sig = Get-AuthenticodeSignature -LiteralPath $path
+            if (-not $sig.SignerCertificate) { throw "No Authenticode signature on $name" }
+            if (-not $sig.TimeStamperCertificate) { throw "No timestamp on $name ($($sig.Status): $($sig.StatusMessage))" }
+            if ($sig.Status -ne 'Valid') { throw "Signature not Valid on $name ($($sig.Status): $($sig.StatusMessage))" }
+            Write-Host "Signed $name signer=$($sig.SignerCertificate.Subject) thumbprint=$($sig.SignerCertificate.Thumbprint) status=$($sig.Status)"
+          }
+          $orig = Get-Content -LiteralPath (Join-Path $work 'SHA256SUMS.orig')
+          $out = foreach ($line in $orig) {
+            if ($line -notmatch '^([a-fA-F0-9]{64})  ([^/\\]+)$') { throw "Invalid checksum entry: $line" }
+            $name = $Matches[2]
+            if ($name -in $windows) {
+              $hash = (Get-FileHash -LiteralPath (Join-Path $work $name) -Algorithm SHA256).Hash.ToLowerInvariant()
+              "{0}  {1}" -f $hash, $name
+            } else {
+              $line
+            }
+          }
+          $sums = Join-Path $work 'SHA256SUMS'
+          [IO.File]::WriteAllText($sums, (($out -join "`n") + "`n"))
+          foreach ($name in $windows) {
+            & gh release upload $env:TAG (Join-Path $work $name) --repo $env:RELEASE_REPO --clobber
+            if ($LASTEXITCODE) { throw "Upload failed for $name" }
+          }
+          & gh release upload $env:TAG $sums --repo $env:RELEASE_REPO --clobber
+          if ($LASTEXITCODE) { throw "Upload failed for SHA256SUMS" }
+          Write-Host "Signed Windows assets published on https://github.com/$($env:RELEASE_REPO)/releases/tag/$($env:TAG)"
