@@ -85,6 +85,10 @@ Mac quick start: `curl -LO https://github.com/ForgeKV/mcpdesk-agent/releases/lat
 - Known caveats: binaries are not code-signed (verify with `SHA256SUMS`); the ARM64 builds were not run on real ARM hardware.
 For a stopped headless/service identity, recover access with `mcpdeskagent access resume --data-dir <exact-identity-directory>`. Stop the service and close all mirrors first. Resume permits still-valid credentials to create fresh sessions under the selected mode.
 
+## Windows code signing
+
+Windows EXEs are Authenticode-signed with Azure Trusted Signing (account `mcpdesk-signing`, profile `mcpdesk-public`) when that certificate profile is available. Until Microsoft finishes identity validation, releases stay unsigned; verify them with `SHA256SUMS`. After the profile exists, re-run the **Sign Windows release** workflow against the release tag.
+
 ## Verify
 
 Download the files and SHA256SUMS into one folder, then:
